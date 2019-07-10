@@ -25,7 +25,7 @@ async function app() {
 
 async function getBrowser() {
     return await puppeteer.launch({
-        headless: false,
+        headless: true,
         args: defaultBrowserProps
     });
 }
