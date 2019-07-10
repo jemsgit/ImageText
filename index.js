@@ -2,6 +2,7 @@ const puppeteer = require('puppeteer');
 const path = require('path')
 
 const defaultBrowserProps = ['--lang=en-US,en', '--no-sandbox', '--disable-setuid-sandbox'];
+const imagesCount = 34;
 
 async function app() {
     let title = process.argv[2] || '';
@@ -11,6 +12,11 @@ async function app() {
     await page.goto(`file://${path.join(process.cwd(), 'index.html')}`, {waitUntil: 'networkidle2'});
     page.setViewport({width: 1500, height: 900, deviceScaleFactor: 1});
     await setTitles(page, title, subTitle);
+	let image = getRandomImage(imagesCount);
+	await setBackgroungImage(page, image);
+	let titleFontSize = getFontSizeFromLength({min:8, max: 25}, {min: 95, max: 200}, title.length);
+	console.log(titleFontSize);
+	await setTitleFontSize(page, titleFontSize);
     await screenshotDOMElement(page, '#target');
     page.close();
     console.log('Картинка готова');
@@ -19,7 +25,7 @@ async function app() {
 
 async function getBrowser() {
     return await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: defaultBrowserProps
     });
 }
@@ -31,6 +37,24 @@ async function setTitles(page, title, subtitle) {
       }, title, subtitle);
 }
 
+function getRandomImage(max){
+	let number = Math.round(Math.random() * (max - 1) + 1);
+	return `./img/back${number}.jpg`;
+}
+
+async function setTitleFontSize(page, size) {
+    await page.evaluate((a) => {
+        document.querySelector('#title').style.fontSize = `${a}px`;
+    }, size);
+}
+
+async function setBackgroungImage (page, image) {
+    await page.evaluate((a) => {
+        document.querySelector('#target').style.backgroundImage = `url('${a}')`;
+    }, image);
+}
+
+
 async function screenshotDOMElement(page, selector, padding = 0) {
     const rect = await page.evaluate(selector => {
       const element = document.querySelector(selector);
@@ -39,7 +63,7 @@ async function screenshotDOMElement(page, selector, padding = 0) {
     }, selector);
   
     return await page.screenshot({
-      path: 'element.jpg',
+      path: 'image.jpg',
       quality: 100,
       type:'jpeg',
       clip: {
@@ -50,5 +74,16 @@ async function screenshotDOMElement(page, selector, padding = 0) {
       }
     });
   }
+  
+function getFontSizeFromLength(lengthParams, fontParams, stringLength){
+	if(stringLength >= lengthParams.max) {
+		return fontParams.min;
+	}
+	if(stringLength <= lengthParams.min) {
+		return fontParams.max;
+	}
+	let scaleFactor = (fontParams.max - fontParams.min)/(lengthParams.max - lengthParams.min);
+	return Math.round(fontParams.max - ((stringLength-lengthParams.min)*scaleFactor));
+}
 
 app();
