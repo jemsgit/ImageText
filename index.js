@@ -7,14 +7,15 @@ const imagesCount = 34;
 async function app() {
     let title = process.argv[2] || '';
     let subTitle = process.argv[3] || '';
+	let imgNumber = process.argv[4];
     let browser = await getBrowser();
     let page = await browser.newPage();
     await page.goto(`file://${path.join(process.cwd(), 'index.html')}`, {waitUntil: 'networkidle2'});
     page.setViewport({width: 1500, height: 900, deviceScaleFactor: 1});
     await setTitles(page, title, subTitle);
-	let image = getRandomImage(imagesCount);
+	let image = getImage(imgNumber);
 	await setBackgroungImage(page, image);
-	let titleFontSize = getFontSizeFromLength({min:8, max: 25}, {min: 95, max: 200}, title.length);
+	let titleFontSize = getFontSizeFromLength({min:5, max: 25}, {min: 100, max: 200}, title.length);
 	console.log(titleFontSize);
 	await setTitleFontSize(page, titleFontSize);
     await screenshotDOMElement(page, '#target');
@@ -25,7 +26,7 @@ async function app() {
 
 async function getBrowser() {
     return await puppeteer.launch({
-        headless: true,
+        headless: false,
         args: defaultBrowserProps
     });
 }
@@ -37,9 +38,15 @@ async function setTitles(page, title, subtitle) {
       }, title, subtitle);
 }
 
+function getImage(imageNumber){
+	if(!imageNumber) {
+		imageNumber = getRandomImage(imagesCount);
+	}
+	return `./img/back${imageNumber}.jpg`;
+}
+
 function getRandomImage(max){
-	let number = Math.round(Math.random() * (max - 1) + 1);
-	return `./img/back${number}.jpg`;
+	return Math.round(Math.random() * (max - 1) + 1);
 }
 
 async function setTitleFontSize(page, size) {
