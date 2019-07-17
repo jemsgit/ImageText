@@ -2,7 +2,8 @@ const puppeteer = require('puppeteer');
 const path = require('path')
 
 const defaultBrowserProps = ['--lang=en-US,en', '--no-sandbox', '--disable-setuid-sandbox'];
-const imagesCount = 34;
+const imagesCount = 66;
+const sexyNumberStart = 55;
 
 async function app() {
     let title = process.argv[2] || '';
@@ -33,8 +34,8 @@ async function getBrowser() {
 
 async function setTitles(page, title, subtitle) {
     await page.evaluate((a, b) => {
-        document.querySelector('#title').innerText = a.toUpperCase();
-        document.querySelector('#subtitle').innerText = b.toUpperCase();
+        document.querySelector('#title').innerText = a;
+        document.querySelector('#subtitle').innerText = b;
       }, title, subtitle);
 }
 
