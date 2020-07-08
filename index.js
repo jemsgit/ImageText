@@ -15,7 +15,7 @@ async function app() {
     await setTitles(page, title, subTitle);
 	let image = getImage(imgNumber);
 	await setBackgroungImage(page, image);
-	let titleFontSize = getFontSizeFromLength({min:5, max: 25}, {min: 100, max: 200}, title.length);
+	let titleFontSize = getFontSizeFromLength({min:5, max: 25}, {min: 80, max: 180}, title.length);
 	console.log(titleFontSize);
 	await setTitleFontSize(page, titleFontSize);
     await screenshotDOMElement(page, '#target');
@@ -33,8 +33,8 @@ async function getBrowser() {
 
 async function setTitles(page, title, subtitle) {
     await page.evaluate((a, b) => {
-        document.querySelector('#title').innerText = a.toUpperCase();
-        document.querySelector('#subtitle').innerText = b.toUpperCase();
+        document.querySelector('#title').innerText = a;
+        document.querySelector('#subtitle').innerText = b;
       }, title, subtitle);
 }
 
