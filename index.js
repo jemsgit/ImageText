@@ -2,7 +2,8 @@ const puppeteer = require('puppeteer');
 const path = require('path')
 
 const defaultBrowserProps = ['--lang=en-US,en', '--no-sandbox', '--disable-setuid-sandbox'];
-const imagesCount = 34;
+const imagesCount = 66;
+const sexyNumberStart = 55;
 
 async function app() {
     let title = process.argv[2] || '';
